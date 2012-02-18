@@ -36,44 +36,42 @@ color: #735344;
 <div id="contents">
 
 <?php
-include_once( 'markdown.php' );
+include_once( 'markdown.php' );//マークダウンするためのファンクションを読み込みます
 
-//definition
-//characters
-$fumika = 'フミカ';
-$watashi = '私';
-$sayuri = 'さゆり';
-
-//contents creating
-if ($handle = opendir('chapters')) {
-    while (false !== ($entry = readdir($handle))) {
-	    if ($entry != "." && $entry != ".." && preg_match("/^\./",$entry) != 1) {
-            $chapter = file_get_contents("chapters/$entry");
-	    $body .= $chapter;
-        }
-    }
-    closedir($handle);
+function ruby($body){
+	$patterns = array( "/｜/", "/《/", "/》/");
+	$replacements = array( "<ruby><rp>（</rp><rb>", "<rt>", "</rt><rp>）</rp></ruby>" );
+	$body = preg_replace($patterns, $replacements, $body);	
+	return $body;
 }
+function novelmarkdown($data){
+	$data = preg_replace( "/\n.\n/","\n\n<p><br></p>\n\n", $data);
+	$data = preg_replace( "/\n.\n/","\n\n<p><br></p>\n\n", $data);
+	$data = preg_replace( "/\n/","\n\n", $data);
+	return $data;
+}
+function chap($chapter){
+	include( 'config.php' );
+	include("chapters/".$chapter);
+	$data = ruby($data);
+	$data = novelmarkdown($data);
+	echo Markdown($data);
+}
+chap("chapter01.php");
+chap("chapter02.php");
+chap("chapter03.php");
+chap("chapter04.php");
+chap("chapter05.php");
+chap("chapter06.php");
+chap("chapter07.php");
+chap("chapter08.php");
+chap("chapter09.php");
+chap("chapter10.php");
+chap("chapter11.php");
+chap("chapter12.php");
+chap("chapter13.php");
 
-//markdownに対応するために、通常改行を2回の改行にし、段落に変換させます。
-$body = preg_replace("/.(\n).(\n).(\n).(\n).(\n)/", "\n<p><br></p>\n\n<p><br></p>\n\n\n\n<p><br></p>\n\n\n\n<p><br></p>\n\n", $body, -1, $count5);
-$body = preg_replace("/.(\n).(\n).(\n).(\n)/", "\n<p><br></p>\n\n<p><br></p>\n\n\n\n<p><br></p>\n\n", $body, -1, $count4);
-$body = preg_replace("/.(\n).(\n).(\n)/", "\n<p><br></p>\n\n<p><br></p>\n\n", $body, -1, $count3);
-$body = preg_replace("/.(\n).(\n)/", "\n<p><br></p>\n\n", $body, -1, $count2);
-$body = preg_replace("/(\n)/", "\n\n", $body, -1, $count1);
-
-
-//echo $count5."<br>\n";
-//echo $count4."<br>\n";//開発中のメモです。
-//echo $count3."<br>\n";//改行を置換した回数をカウント
-//echo $count2."<br>\n";
-//echo $count1."<br>\n";
-
-$body = Markdown($body);
-$contents = "<?php \n echo <<<___END\n$body\n___END;\n ?>";
-file_put_contents( "contents.php" , $contents );
-include 'contents.php';
 ?>
-
 </div>
 </body>
+</html>
