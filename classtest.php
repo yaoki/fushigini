@@ -2,69 +2,136 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
+<link rel="stylesheet" href="css/default.css" type="text/css">
 <title>フシギにステキな素早いヤバさ</title>
-<style>
-body {
-background: #fffefd;
-font-family: "ＭＳ 明朝","Hiragino Mincho Pro",Osaka,monospace;
-font-size: 16px;
-}
-div#contents{
-font-family: "ＭＳ 明朝","Hiragino Mincho Pro",Osaka,monospace;
-font-size: 16px;
-width: 42em;/*折り返し字数を設定します*/
-padding: 0;
-margin: 10px auto;
-background: #fffefd;
-text-align: left;
-}
-h2{
-color: #735344;
-}
-p{
-font-family: "ＭＳ 明朝","Hiragino Mincho Pro",Osaka,monospace;
-font-size: 16px;
-margin: 0em;
-padding: 0;
-line-height: 1.7em;
-color: #735344;
-}
-</style>
 </head>
 
 <body>
 <div id="contents">
 
 <?php
-$nov = new fushigini();
-$nov->show('chapters/chapter01.php');
-$nov->show('chapters/chapter02.php');
+#まず、変数の設定ファイルを読み込む
+include('config.php');
 
-class fushigini
-{
-	//メンバ変数の定義
-	//キャラクター
-	private $fumika = 'フミカ';
-	private $watashi = '私';
-	private $kimi = 'きみ';
-	private $sayuri = 'さゆり';
+#私オブジェクトの使用例
+#インスタンスwataについて、主格を私にセット
+$line = new line();
 
+$wata = new phenomenon($watashi);
+$wata->mainActive();
+$line->close();
 
-	//メソッドの定義
-	//文章のデータを表示する
-	public function show($fname){
+$c = $wata->getActive($watashi);
+$wata->mainActive($c,'話す','犬');
+$line->close();
 
-		$fumika = $this->fumika;
-		$watashi = $this->watashi;
-		$kimi = $this->kimi;
-		$sayuri = $this->sayuri;
+echo "<br>";
 
-		include_once('markdown.php');
-		include($fname);
-		echo Markdown($data);
+#フミカオブジェクトの使用例
+#インスタンスfumiについて、主格をフミカにセット
+$fumi = new phenomenon($fumika);
+$c = $fumi->getActive('犬','出す','外');
+$wata->mainActive($c, '見る' );
+$line->close();
 
+echo '<br>';
+
+#犬オブジェクトの使用例
+$inu = new phenomenon('犬');
+$inu->subActive('サルサ','踊る');
+$line->breath();
+
+$fumi->mainActive('穴','掘る');
+$line->close();
+
+class line{
+	private $period;
+
+	public function __construct(){
+		$this->period = '。';
+		$this->comma = '、';
+	}
+	public function setPeriod($symbol){
+		$this->period = $symbol;
+	}
+	public function setComma($symbol){
+		$this->comma = $symbol;
+	}
+	public function close($symbol){
+		if(!isset($symbol)){
+			echo $this->period;
+		}else{
+			echo $symbol;}
+	}
+	public function breath($symbol){
+		if(!isset($symbol)){
+			echo $this->comma;
+		}else{
+			echo $symbol;}
 	}
 }
+class phenomenon{
+	#小説の存在を書くクラスです
+	//メンバ変数の定義
+	private $subject;//主格「は」（本来は「が」だが便宜的に）
+
+	//コンストラクタ
+	//主語、対格をセット
+	public function __construct($subject){
+		$this->subject = $subject;
+	}
+
+	#メソッドの定義
+	public function getActive($accusative,$verb,$dative){
+		if(isset($accusative) && isset($verb) && !isset($dative)){
+			return $this->subject.'が'.$verb.$accusative;
+		}elseif(isset($accusative) && !isset($verb)){
+			return $accusative;
+		}elseif(!isset($accusative)){
+			return $this->subject.'が';
+		}else{
+			return $this->subject.'が'.$dative.'に'.$verb.$accusative;
+		}
+	}
+	public function mainActive($accusative,$verb,$dative){
+		if(isset($accusative) && isset($verb) && !isset($dative)){
+			echo $this->subject.'は'.$accusative.'を'.$verb;
+		}elseif(isset($accusative) && !isset($verb)){
+			echo $accusative;
+		}elseif(!isset($accusative)){
+			echo $this->subject.'は';
+		}else{
+			echo $this->subject.'は'.$dative.'に'.$accusative.'を'.$verb;
+		}
+	}
+	public function subActive($accusative,$verb,$dative){
+		if(isset($accusative) && isset($verb) && !isset($dative)){
+			echo $this->subject.'が'.$accusative.'を'.$verb;
+		}elseif(isset($accusative) && !isset($verb)){
+			echo $accusative;
+		}elseif(!isset($accusative)){
+			echo $this->subject.'が';
+		}else{
+			echo $this->subject.'が'.$dative.'に'.$accusative.'を'.$verb;
+		}
+	}
+	//自動詞を定義
+	public function mainIntransitive($verb){
+		if(!isset($verb)){
+			echo $this->subject.'は';
+		}else{
+			echo $subject.'は'.$verb;
+		}
+	}
+	public function subIntransitive($verb){
+		if(!isset($verb)){
+			echo $this->subject.'が';
+		}else{
+			echo $subject.'が'.$verb;
+		}
+	}
+}
+
 ?>
 </div>
 </body>
