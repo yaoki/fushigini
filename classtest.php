@@ -38,7 +38,7 @@ echo '<br>';
 
 #犬オブジェクトの使用例
 $inu = new phenomenon('犬');
-$inu->subActive('サルサ','踊る');
+$inu->subActive('サルサ','踊り');
 $line->breath();
 
 $fumi->mainActive('穴','掘る');
@@ -95,13 +95,13 @@ class phenomenon{
 	}
 	public function mainActive($accusative,$verb,$dative){
 		if(isset($accusative) && isset($verb) && !isset($dative)){
-			echo $this->subject.'は'.$accusative.'を'.$verb;
+			echo $this->subject.'は、'.$accusative.'を'.$verb;
 		}elseif(isset($accusative) && !isset($verb)){
 			echo $accusative;
 		}elseif(!isset($accusative)){
-			echo $this->subject.'は';
+			echo $this->subject.'は、';
 		}else{
-			echo $this->subject.'は'.$dative.'に'.$accusative.'を'.$verb;
+			echo $this->subject.'は、'.$dative.'に'.$accusative.'を'.$verb;
 		}
 	}
 	public function subActive($accusative,$verb,$dative){
