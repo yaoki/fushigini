@@ -36,40 +36,47 @@ color: #735344;
 <div id="contents">
 
 <?php
-include_once( 'markdown.php' );//マークダウンするためのファンクションを読み込みます
+class fushigini{
+	private $phpmarkdown = 'markdown.php';
+	private $config = 'config.php';
+	private $chapters_path = 'chapters/';
 
-function ruby($body){
-	$patterns = array( "/｜/", "/《/", "/》/");
-	$replacements = array( "<ruby><rp>（</rp><rb>", "<rt>", "</rt><rp>）</rp></ruby>" );
-	$body = preg_replace($patterns, $replacements, $body);	
-	return $body;
+
+	public function ruby($body){
+		$patterns = array( "/｜/", "/《/", "/》/");
+		$replacements = array( "<ruby><rp>（</rp><rb>", "<rt>", "</rt><rp>）</rp></ruby>" );
+		$body = preg_replace($patterns, $replacements, $body);	
+		return $body;
+	}
+	public function novelmarkdown($data){
+		$data = preg_replace( "/\n.\n/","\n\n<p><br></p>\n\n", $data);
+		$data = preg_replace( "/\n.\n/","\n\n<p><br></p>\n\n", $data);
+		$data = preg_replace( "/\n/","\n\n", $data);
+		return $data;
+	}
+	public function getChapter($chapter){
+		include_once( $this->phpmarkdown );//マークダウンするためのファンクションを読み込みます
+		include( $this->config );
+		include( $this->chapters_path.$chapter );
+		$data = $this->ruby($data);
+		$data = $this->novelmarkdown($data);
+		return Markdown($data);
+	}
 }
-function novelmarkdown($data){
-	$data = preg_replace( "/\n.\n/","\n\n<p><br></p>\n\n", $data);
-	$data = preg_replace( "/\n.\n/","\n\n<p><br></p>\n\n", $data);
-	$data = preg_replace( "/\n/","\n\n", $data);
-	return $data;
-}
-function chap($chapter){
-	include( 'config.php' );
-	include("chapters/".$chapter);
-	$data = ruby($data);
-	$data = novelmarkdown($data);
-	echo Markdown($data);
-}
-chap("chapter01.php");
-chap("chapter02.php");
-chap("chapter03.php");
-chap("chapter04.php");
-chap("chapter05.php");
-chap("chapter06.php");
-chap("chapter07.php");
-chap("chapter08.php");
-chap("chapter09.php");
-chap("chapter10.php");
-chap("chapter11.php");
-chap("chapter12.php");
-chap("chapter13.php");
+$fs = new fushigini();
+echo $fs->getChapter("chapter01.php");
+echo $fs->getChapter("chapter02.php");
+echo $fs->getChapter("chapter03.php");
+echo $fs->getChapter("chapter04.php");
+echo $fs->getChapter("chapter05.php");
+echo $fs->getChapter("chapter06.php");
+echo $fs->getChapter("chapter07.php");
+echo $fs->getChapter("chapter08.php");
+echo $fs->getChapter("chapter09.php");
+echo $fs->getChapter("chapter10.php");
+echo $fs->getChapter("chapter11.php");
+echo $fs->getChapter("chapter12.php");
+echo $fs->getChapter("chapter13.php");
 
 ?>
 </div>
